@@ -8,5 +8,7 @@ import { Product, ProductImage } from './entities';
   controllers: [ProductsController],
   providers: [ProductsService],
   imports: [TypeOrmModule.forFeature([Product, ProductImage])],
+  // Al exportar el TypeOrmModule se permite utilizar los repositorios, creados en este módulo, en el módulo en el que se importen
+  exports: [ProductsService, TypeOrmModule],
 })
 export class ProductsModule {}
