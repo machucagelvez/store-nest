@@ -16,14 +16,14 @@
 docker compose up -d
 ```
 
-6. Ejecutar seed:
-
-```
-http://localhost:3000/api/seed
-```
-
 6. Iniciar el API:
 
 ```
 npm ru start:dev
+```
+
+7. Ejecutar seed:
+
+```
+http://localhost:3000/api/seed
 ```
