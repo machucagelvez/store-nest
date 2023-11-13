@@ -11,6 +11,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Product, ProductImage } from './entities';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -26,7 +27,7 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
       const product = this.productRepository.create({
@@ -35,6 +36,7 @@ export class ProductsService {
         images: images.map((image) =>
           this.productImageRepository.create({ url: image }),
         ),
+        user,
       }); // Se crea la instancia del producto, no se graba en BD, por eso es síncrono
       await this.productRepository.save(product); // Guardar en ambas tablas
       return { ...product, images };
@@ -88,7 +90,7 @@ export class ProductsService {
     return { ...rest, images: images.map((image) => image.url) };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdate } = updateProductDto;
 
     // preload busca por el primer parámetro y carga los campos asociados (segundo parámetro)
@@ -116,6 +118,7 @@ export class ProductsService {
         );
       }
 
+      product.user = user;
       await queryRunner.manager.save(product); // En este cason no se guarda, solo verifica que no haya errores
       // await this.productRepository.save(product);
       await queryRunner.commitTransaction(); // Guarda los cambios en BD
